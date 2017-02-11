@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta name="exporter-version" content="Evernote Mac 6.10 (454267)"/><meta name="altitude" content="15.08753108978271"/><meta name="author" content="jymn_chen@126.com"/><meta name="created" content="2015-10-27 07:43:15 +0000"/><meta name="latitude" content="23.06073107626086"/><meta name="longitude" content="113.402247463071"/><meta name="source" content="desktop.mac"/><meta name="updated" content="2015-10-27 09:06:26 +0000"/><title>4566开发（1）Crash分析</title></head><body>
+<div>1. 接入可以捕获并上报Crash信息的SDK，如MTA，友盟</div>
+<div><br/></div>
+<div>2. archive的时候把 dSYM 文件保存下来</div>
+<div><br/></div>
+<div>3. 分析 crash 时，把 .app文件、.dSYM文件、read_dsym.sh 放在同一个目录下，如：</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/2AD87F99-FE87-468B-BE32-0655C038A430.png" height="122" width="545"/></div>
+<div>注：</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/D467637D-F931-4B1A-8A08-C5CF6ED51611.png" height="275" width="782"/></div>
+<div><br/></div>
+<div>read_dsym.sh文件（已经附有注释）：</div>
+<div><a href="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/read_dsym.sh">read_dsym.sh</a></div>
+<div><br/></div>
+<div>4. crash堆栈示例：</div>
+<div>
+<hr/></div>
+<div><span style="font-size: 10px;">Last Exception Backtrace:</span></div>
+<div><span style="font-size: 10px;">0   CoreFoundation                    0x3051cf7e __exceptionPreprocess + 126</span></div>
+<div><span style="font-size: 10px;">1   libobjc.A.dylib                   0x3ac69cca objc_exception_throw + 34</span></div>
+<div><span style="font-size: 10px;">2   CoreFoundation                    0x30453a34 -[__NSArrayI objectAtIndex:] + 172</span></div>
+<div><span style="font-size: 10px;"><span style="color: rgb(255, 38, 0);">3   H5GameCenter                      0x00105cb8 0x5f000 + 683192</span></span></div>
+<div><span style="font-size: 10px;">4   UIKit                             0x32d3e4a6 -[UIViewController loadViewIfRequired] + 514</span></div>
+<div><span style="font-size: 10px;">5   UIKit                             0x32d3e264 -[UIViewController view] + 20</span></div>
+<div><span style="font-size: 10px;">6   UIKit                             0x32eca366 -[UINavigationController _startCustomTransition:] + 630</span></div>
+<div><span style="font-size: 10px;">7   UIKit                             0x32de7d5e -[UINavigationController _startDeferredTransitionIfNeeded:] + 414</span></div>
+<div><span style="font-size: 10px;">8   UIKit                             0x32de7b68 -[UINavigationController __viewWillLayoutSubviews] + 40</span></div>
+<div><span style="font-size: 10px;">9   UIKit                             0x32de7b00 -[UILayoutContainerView layoutSubviews] + 180</span></div>
+<div><span style="font-size: 10px;">10  UIKit                             0x32d39d54 -[UIView(CALayerDelegate) layoutSublayersOfLayer:] + 376</span></div>
+<div><span style="font-size: 10px;">11  QuartzCore                        0x329b7626 -[CALayer layoutSublayers] + 138</span></div>
+<div><span style="font-size: 10px;">12  QuartzCore                        0x329b2e36 CA::Layer::layout_if_needed(CA::Transaction*) + 346</span></div>
+<div><span style="font-size: 10px;">13  QuartzCore                        0x329b2cc8 CA::Layer::layout_and_display_if_needed(CA::Transaction*) + 12</span></div>
+<div><span style="font-size: 10px;">14  QuartzCore                        0x329b26da CA::Context::commit_transaction(CA::Transaction*) + 226</span></div>
+<div><span style="font-size: 10px;">15  QuartzCore                        0x329b24ea CA::Transaction::commit() + 310</span></div>
+<div><span style="font-size: 10px;">16  QuartzCore                        0x329ac218 CA::Transaction::observer_callback(__CFRunLoopObserver*, unsigned long, void*) + 52</span></div>
+<div><span style="font-size: 10px;">17  CoreFoundation                    0x304e8250 __CFRUNLOOP_IS_CALLING_OUT_TO_AN_OBSERVER_CALLBACK_FUNCTION__ + 16</span></div>
+<div><span style="font-size: 10px;">18  CoreFoundation                    0x304e5bf4 __CFRunLoopDoObservers + 280</span></div>
+<div><span style="font-size: 10px;">19  CoreFoundation                    0x304e5f36 __CFRunLoopRun + 726</span></div>
+<div><span style="font-size: 10px;">20  CoreFoundation                    0x30450eba CFRunLoopRunSpecific + 518</span></div>
+<div><span style="font-size: 10px;">21  CoreFoundation                    0x30450c9e CFRunLoopRunInMode + 102</span></div>
+<div><span style="font-size: 10px;">22  GraphicsServices                  0x3537365e GSEventRunModal + 134</span></div>
+<div><span style="font-size: 10px;">23  UIKit                             0x32d9d148 UIApplicationMain + 1132</span></div>
+<div><span style="font-size: 10px;">24  H5GameCenter                      0x0010b0ca 0x5f000 + 704714</span></div>
+<div><span style="font-size: 10px;">25  libdyld.dylib                     0x3b176ab2 tlv_initializer + 2</span></div>
+<div>
+<hr/></div>
+<div>找到 4566 程序相关的行，获取其偏移地址：683192。</div>
+<div><br/></div>
+<div>5. ./read_dsym.sh [arch] [offset address]</div>
+<div>使用例子：</div>
+<div>
+<hr/></div>
+<div><b><span style="font-size: 10px;">$ ./read_dsym.sh armv7 683192</span></b></div>
+<div><span style="font-size: 10px;">/Users/apple/Desktop/H5</span></div>
+<div><span style="font-size: 10px;">----------------------------------------------------------------------</span></div>
+<div><span style="font-size: 10px;"> File: H5GameCenter.app.dSYM/Contents/Resources/DWARF/H5GameCenter (armv7)</span></div>
+<div><span style="font-size: 10px;">----------------------------------------------------------------------</span></div>
+<div><span style="font-size: 10px;">Looking up address: 0x00000000000aacb8 in .debug_info... found!</span></div>
+<div><span style="font-size: 10px;"><br/></span></div>
+<div><span style="font-size: 10px;">0x0017bd46: Compile Unit: length = 0x00001fb7  version = 0x0002  abbr_offset = 0x00000000  addr_size = 0x04  (next CU at 0x0017dd01)</span></div>
+<div><span style="font-size: 10px;"><br/></span></div>
+<div><span style="font-size: 10px;">0x0017bd51: TAG_compile_unit [99] *</span></div>
+<div><span style="font-size: 10px;">             AT_producer( "Apple LLVM version 7.0.0 (clang-700.1.76)" )</span></div>
+<div><span style="font-size: 10px;">             AT_language( DW_LANG_ObjC )</span></div>
+<div><span style="font-size: 10px;">             AT_name( "/Users/apple/Desktop/😄/🐶/youmi/works/4566/H5GameCenter/H5GameCenter/Controllers/My/HGCAccountViewController.m" )</span></div>
+<div><span style="font-size: 10px;">             AT_stmt_list( 0x00074861 )</span></div>
+<div><span style="font-size: 10px;">             AT_comp_dir( "/Users/apple/Desktop/😄/🐶/youmi/works/4566/H5GameCenter" )</span></div>
+<div><span style="font-size: 10px;">             AT_APPLE_optimized( 0x01 )</span></div>
+<div><span style="font-size: 10px;">             AT_APPLE_major_runtime_vers( 0x02 )</span></div>
+<div><span style="font-size: 10px;">             AT_low_pc( 0x000aab00 )</span></div>
+<div><span style="font-size: 10px;">             AT_high_pc( 0x000ad5c2 )</span></div>
+<div><span style="font-size: 10px;"><br/></span></div>
+<div><span style="font-size: 10px;">0x0017c67e:     TAG_subprogram [116] *</span></div>
+<div><span style="font-size: 10px;">                 AT_low_pc( 0x000aac20 )</span></div>
+<div><span style="font-size: 10px;">                 AT_high_pc( 0x000aace4 )</span></div>
+<div><span style="font-size: 10px;">                 AT_frame_base( r7 )</span></div>
+<div><span style="font-size: 10px;">                 AT_object_pointer( {0x0017c696} )</span></div>
+<div><span style="font-size: 10px;">                 AT_name( "-[HGCAccountViewController viewDidLoad]" )</span></div>
+<div><span style="font-size: 10px;">                 AT_decl_file( "/Users/apple/Desktop/😄/🐶/youmi/works/4566/H5GameCenter/H5GameCenter/Controllers/My/HGCAccountViewController.m" )</span></div>
+<div><span style="font-size: 10px;">                 AT_decl_line( 69 )</span></div>
+<div><span style="font-size: 10px;">                 AT_prototyped( 0x01 )</span></div>
+<div><span style="font-size: 10px;">                 AT_APPLE_optimized( 0x01 )</span></div>
+<div><span style="font-size: 10px;">                 AT_APPLE_isa( 0x01 )</span></div>
+<div><span style="font-size: 10px;">Line table dir : '/Users/apple/Desktop/😄/🐶/youmi/works/4566/H5GameCenter/H5GameCenter/Controllers/My'</span></div>
+<div><span style="color: rgb(255, 38, 0);"><span style="font-size: 10px;">Line table file: 'HGCAccountViewController.m' line 78, column 19 with start address 0x00000000000aaca8</span></span></div>
+<div><span style="font-size: 10px;"><br/></span></div>
+<div><span style="font-size: 10px;">Looking up address: 0x00000000000aacb8 in .debug_frame... found!</span></div>
+<div><span style="font-size: 10px;"><br/></span></div>
+<div><span style="font-size: 10px;">0x00017fb0: FDE</span></div>
+<div><span style="font-size: 10px;">        length: 0x0000000c</span></div>
+<div><span style="font-size: 10px;">   CIE_pointer: 0x00000000</span></div>
+<div><span style="font-size: 10px;">    start_addr: 0x000aac20 -[HGCAccountViewController viewDidLoad]</span></div>
+<div><span style="font-size: 10px;">    range_size: 0x000000c4 (end_addr = 0x000aace4)</span></div>
+<div><span style="font-size: 10px;">  Instructions: 0x000aac20: CFA=sp</span></div>
+<div>
+<hr/></div>
+<div>结果如上，具体的行数和列数都列出来了。</div>
+<div><br/></div>
+<div>6. 最后科普一下：</div>
+<div>（1）slide</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/7D411338-FC9D-49E6-A152-1A88E2217BBE.png" height="197" width="845"/></div>
+<div>该地址在打包出 ipa 是固定的。</div>
+<div><br/></div>
+<div>（2）load address</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/A7B160DF-9B82-4FF4-84E9-99200651C354.png" height="52" width="945"/></div>
+<div><br/></div>
+<div>（3）stack address</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/0112DF87-96B1-459D-B046-EDC725020C77.png" height="190" width="803"/></div>
+<div>注意这里 load address 为 0x7c000</div>
+<div><br/></div>
+<div>（4）偏移地址（这里我将其命名为 offset address）</div>
+<div>offset address = stack address - load address</div>
+<div>offset address = symbol address - slide</div>
+<div>
+<hr/></div>
+<div>猜想：</div>
+<div>对于不同的代码行，offset address是随机的，但是<span style="color: rgb(255, 38, 0);">对于同一行代码，offset address是固定的（无论是静态还是动态运行）</span>，所以无论怎么运行甚至重启设备，stack address和load address都是随机的，但是 offset address 和 slide 都是不变的，所以 symbol address 也是不变的，而 symbol address 和代码行数列数是唯一对应的，所以可以通过 dwarfdump —lookup (symbol address) —arch xx xxx.dSYM 这条命令来解析出崩溃的代码位置。</div>
+<div><br/></div>
+<div>验证猜想：</div>
+<div>我在 4566 的我的页面中故意制造了一个数组越界的crash，每次点击进入我的页面都会崩溃，分别在下午2点，3点，4点都制造了同样的crash，结果发现堆栈的偏移地址都是一样的，如下：</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/D4087F5E-01F1-4611-A2BC-D6B548E7885B.png" height="398" width="734"/></div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/D71F4D05-3D7A-4292-924C-E397855BE5C2.png" height="401" width="802"/></div>
+<div><br/></div>
+<div>重启设备：</div>
+<div><img src="4566%E5%BC%80%E5%8F%91%EF%BC%881%EF%BC%89Crash%E5%88%86%E6%9E%90.resources/7E8EE494-5B66-4491-A9FA-85808C89EE07.png" height="401" width="803"/></div>
+<div>
+<hr/></div>
+<div><br/></div>
+<div>（5）symbol address</div>
+<div>symbol address的含义为当前的偏移地址在dSYM文件中的对应值，计算方法：</div>
+<div>symbol address = slide + (stack address - load address)</div>
+<div><br/></div>
+<div>参考资料：</div>
+<div><a href="evernote:///view/1725907511/s32/58d37b2e-029d-424b-b166-9b1eef3673e3/58d37b2e-029d-424b-b166-9b1eef3673e3/" style="color:#69aa35;">【参考资料】CrashLog与dSYM二三事</a></div>
+<div><br/></div>
+<div>还有一个比不上 read_dsym.sh 好用的工具：</div>
+<div><a href="http://answerhuang.duapp.com/index.php/2014/07/06/dsym_tool/">http://answerhuang.duapp.com/index.php/2014/07/06/dsym_tool/</a></div>
+<div><br/></div>
+</body></html>
